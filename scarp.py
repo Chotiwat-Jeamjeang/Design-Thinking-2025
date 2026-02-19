@@ -6,6 +6,8 @@ from webdriver_manager.chrome import ChromeDriverManager
 import time
 import calendar
 from datetime import datetime
+import requests
+import os
 
 # 1. ตั้งค่า Chrome Options (เช่น ปรับให้ทำงานแบบ Background หรือไม่)
 chrome_options = Options()
@@ -20,18 +22,68 @@ try:
     url = "https://dsq.up.ac.th/TIMETABLE-2"
     driver.get(url)
     time.sleep(2) # รอให้หน้าเว็บโหลดครู่หนึ่ง
-    # 4. ดึงข้อมูล (ตัวอย่าง: ชื่อหนังสือทั้งหมดในหน้าแรก)
-    calender = driver.find_elements(By.CSS_SELECTOR, ".tab-content m-t10")
-
-    print(f"พบตารางเวลาทั้งหมด {len(calender)} ตารางในหน้านี้\n")
-
-    # เก็บข้อมูลที่ scrap ได้
-    scraped_data = []
-    for book in calender:
-        # ดึงราคา (อยู่ในคลาส .price_color)
-        price = book.find_element(By.CSS_SELECTOR, ".rounded-md shadow-md").text
-        scraped_data.append(price)
-        print(f"ชื่อเรื่อง: {price}")
+    
+    # 4. ดึงข้อมูล
+    # สร้างโฟลเดอร์สำหรับเก็บรูปภาพ
+    image_dir = "scraped_images"
+    if not os.path.exists(image_dir):
+        os.makedirs(image_dir)
+    
+    # ดึงรูปภาพจากหน้าเว็บ
+    images = driver.find_elements(By.TAG_NAME, "img")
+    print(f"พบรูปภาพทั้งหมด {len(images)} รูปในหน้านี้\n")
+    
+    for i, img in enumerate(images):
+        src = img.get_attribute("src")
+        if src:
+            # ตรวจสอบว่าเป็น URL เต็มหรือไม่
+            if not src.startswith("http"):
+                src = url + "/" + src.lstrip("/")
+            
+            try:
+                response = requests.get(src)
+                if response.status_code == 200:
+                    # สร้างชื่อไฟล์
+                    filename = f"image_{i+1}.png"
+                    filepath = os.path.join(image_dir, filename)
+                    
+                    with open(filepath, "wb") as f:
+                        f.write(response.content)
+                    
+                    print(f"ดาวน์โหลดรูปภาพ: {filename}")
+            except Exception as e:
+                print(f"ไม่สามารถดาวน์โหลดรูปภาพ {src}: {e}")
+    
+    # ดึงข้อมูล taskbar หรือ navigation bar
+    print("\n" + "="*50)
+    print("ดึงข้อมูล Taskbar/Navigation")
+    print("="*50 + "\n")
+    
+    # ค้นหา navigation elements (อาจเป็น nav, ul, li หรือ a tags ใน navigation)
+    nav_elements = driver.find_elements(By.CSS_SELECTOR, "nav a, .navbar a, .nav a, header a, .menu a")
+    if not nav_elements:
+        # ถ้าไม่พบ ให้ลองหา a tags ที่อาจเป็น navigation
+        nav_elements = driver.find_elements(By.TAG_NAME, "a")
+    
+    print(f"พบลิงก์ navigation ทั้งหมด {len(nav_elements)} ลิงก์\n")
+    
+    navigation_data = []
+    for i, link in enumerate(nav_elements[:10]):  # จำกัดแค่ 10 ลิงก์แรกเพื่อไม่ให้เยอะเกินไป
+        href = link.get_attribute("href")
+        text = link.text.strip()
+        if text and href:  # ตรวจสอบว่ามีข้อความและลิงก์
+            navigation_data.append({"text": text, "url": href})
+            print(f"{i+1}. {text} -> {href}")
+    
+    # บันทึกข้อมูล navigation ลงไฟล์
+    if navigation_data:
+        nav_file = "scraped_navigation.txt"
+        with open(nav_file, "w", encoding="utf-8") as f:
+            f.write("Navigation Links from Scraping:\n")
+            f.write("="*50 + "\n")
+            for item in navigation_data:
+                f.write(f"{item['text']} -> {item['url']}\n")
+        print(f"\nบันทึกข้อมูล navigation ลงไฟล์: {nav_file}")
     
     # แสดงปฏิทินของเดือนปัจจุบัน
     print("\n" + "="*50)
@@ -62,5 +114,3 @@ try:
 finally:
     # 5. ปิด Browser
     driver.quit()
-
-    
