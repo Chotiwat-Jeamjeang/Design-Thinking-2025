@@ -4,7 +4,7 @@ from auth import login, register
 
 init_db()
 
-st.image("https://dsq.up.ac.th/shapen/images/logo-dsq-color.png", width=100)
+st.image("https://upload.wikimedia.org/wikipedia/commons/7/78/Image.jpg", width=100)
 
 st.set_page_config(page_title="สนามแบดมินตัน", layout="wide")
 
