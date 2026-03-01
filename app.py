@@ -16,7 +16,7 @@ headers = {
 response = requests.get(url, headers=headers)
 img = Image.open(BytesIO(response.content))
 
-st.image(img, width=100)
+st.image(img, width=885)
 
 st.set_page_config(page_title="สนามแบดมินตัน", layout="wide")
 
