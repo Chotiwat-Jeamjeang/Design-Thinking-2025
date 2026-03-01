@@ -1,10 +1,22 @@
+import requests
+from PIL import Image
+from io import BytesIO
 import streamlit as st
 from database import init_db
 from auth import login, register
 
 init_db()
 
-st.image("https://upload.wikimedia.org/wikipedia/commons/7/78/Image.jpg", width=100)
+url = "https://dsq.up.ac.th/shapen/images/logo-dsq-header2.png"
+
+headers = {
+    "User-Agent": "Mozilla/5.0"
+}
+
+response = requests.get(url, headers=headers)
+img = Image.open(BytesIO(response.content))
+
+st.image(img, width=100)
 
 st.set_page_config(page_title="สนามแบดมินตัน", layout="wide")
 
