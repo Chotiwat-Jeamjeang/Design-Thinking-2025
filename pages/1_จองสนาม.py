@@ -1,6 +1,29 @@
 import streamlit as st
 from booking import create_booking
 from datetime import date
+import streamlit as st
+import requests
+from PIL import Image
+
+headers = {"User-Agent": "Mozilla/5.0"}
+response = requests.get(
+    "https://dsq.up.ac.th/shapen/images/logo-dsq-color.png",
+    headers=headers
+)
+img = Image.open(BytesIO(response.content))
+
+st.image(img, width=885)
+
+st.markdown(
+    """
+    <style>
+    .stApp {
+        background-color: #265e20;
+    }
+    </style>
+    """,
+    unsafe_allow_html=True
+)
 
 st.title("🏟️ จองสนาม")
 
