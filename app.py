@@ -4,6 +4,8 @@ from auth import login, register
 
 init_db()
 
+st.image("https://dsq.up.ac.th/shapen/images/logo-dsq-header2.png", width=100)
+
 st.set_page_config(page_title="สนามแบดมินตัน", layout="wide")
 
 if "logged_in" not in st.session_state:
