@@ -4,6 +4,16 @@ from io import BytesIO
 import streamlit as st
 from database import init_db
 from auth import login, register
+st.markdown(
+    """
+    <style>
+    .stApp {
+        background-color: #0E1117;
+    }
+    </style>
+    """,
+    unsafe_allow_html=True
+)
 
 init_db()
 
