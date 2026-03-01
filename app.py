@@ -6,7 +6,7 @@ init_db()
 
 st.set_page_config(page_title="สนามแบดมินตัน", layout="wide")
 
-st.image("https://dsq.up.ac.th/shapen/images/logo-dsq-header2.png", width=100, use_column_width=False)
+st.image("https://dsq.up.ac.th/shapen/images/logo-dsq-header2.png", width=100)
 
 if "logged_in" not in st.session_state:
     st.session_state.logged_in = False
