@@ -7,13 +7,11 @@ from auth import login, register
 
 init_db()
 
-url = "https://dsq.up.ac.th/shapen/images/logo-dsq-header2.png"
-
 headers = {
     "User-Agent": "Mozilla/5.0"
 }
 
-response = requests.get(url, headers=headers)
+response = requests.get("https://dsq.up.ac.th/shapen/images/logo-dsq-color.png", headers=headers)
 img = Image.open(BytesIO(response.content))
 
 st.image(img, width=885)
